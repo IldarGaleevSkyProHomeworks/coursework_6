@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    "django_crontab",
+
     "app_accounts",
     "app_mailing"
 ]
@@ -133,3 +135,11 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = 'app_accounts.User'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CRONJOBS = [
+    ('1 0 * * *', 'app_mailing.cronjobs.schedule_daily'),
+    ('1 0 * * 0', 'app_mailing.cronjobs.schedule_weekly'),
+    ('0 0 1 * *', 'app_mailing.cronjobs.schedule_monthly'),
+]

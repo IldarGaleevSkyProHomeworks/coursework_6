@@ -76,6 +76,12 @@ class Mailing(models.Model):
         verbose_name='Рассылаемое сообщение'
     )
 
+    subscribers = models.ManyToManyField(
+        User,
+        related_name='subscriptions',
+        verbose_name='Получатели'
+    )
+
     def __str__(self):
         return (
             f'{self.message.subject} от '
