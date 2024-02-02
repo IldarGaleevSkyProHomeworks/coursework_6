@@ -1,22 +1,30 @@
 {% extends 'shared/_base.html' %}
 
 {% block title %}
-	{{ block.super }} - {{ object }}
+  {{ block.super }} - {{ object }}
 {% endblock %}
 
 {% block content %}
-  <div>
-    <a href="{% url 'app_mailings:mail_message_list'%}">List</a>
-    <a href="{% url 'app_mailings:mail_message_update' object.pk %}">Edit</a>
-    <a href="{% url 'app_mailings:mail_message_delete' object.pk %}">Delete</a>
+  <div class="btn-toolbar" role="toolbar">
+    <div class="btn-group btn-group-sm my-4" role="group">
+      <a class="btn btn-outline-primary" href="{% url 'app_mailings:mail_message_list' %}">
+        <bi class="bi bi-list"></bi>
+        Список</a>
+      <a class="btn btn-outline-success" href="{% url 'app_mailings:mail_message_update' object.pk %}">
+        <bi class="bi bi-pencil"></bi>
+        Править</a>
+      <a class="btn btn-outline-danger" href="{% url 'app_mailings:mail_message_delete' object.pk %}">
+        <bi class="bi bi-trash"></bi>
+        Удалить</a>
+    </div>
   </div>
 
   <p>{{ object.author }}</p>
   <p>{{ object.subject }}</p>
   <p>{{ object.text }}</p>
   <ul>
-  {% for subscriber in object.subscribers.all %}
-  	<li>{{ subscriber.email }}</li>
-  {% endfor %}
+    {% for subscriber in object.subscribers.all %}
+      <li>{{ subscriber.email }}</li>
+    {% endfor %}
   </ul>
 {% endblock %}

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "django_crontab",
+    "django_bootstrap5",
 
     "app_accounts",
     "app_mailing",
@@ -133,6 +134,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+BOOTSTRAP5 = {
+    "css_url": {
+        "url": f'/{STATIC_URL}css/bootstrap.min.css'
+    },
+
+    "javascript_url": {
+        "url": f'/{STATIC_URL}js/bootstrap.bundle.min.js'
+    },
+
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

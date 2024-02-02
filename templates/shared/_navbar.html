@@ -1,9 +1,26 @@
+<div class="container-fluid">
+  <a class="navbar-brand text-uppercase" href="/">Owl <i class="bi bi-envelope-open-heart"></i> post</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+      class="navbar-toggler-icon"></span></button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      {% with url_name=request.resolver_match.namespace|add:":"|add:request.resolver_match.url_name %}
+        <li class="nav-item">
+          <a class="nav-link {% if url_name == 'index' %}active{% endif %}"
+             href="{% url 'index' %}">Главная</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if url_name == 'app_mailings:mailing_list' %}active{% endif %}"
+             href="{% url 'app_mailings:mailing_list' %}">Рассылки</a>
+        </li>
 
-<ul>
-  <li><a href="{% url 'index' %}">Home</a></li>
-  <li><a href="{% url 'app_mailings:mailing_list' %}">Mailing</a></li>
-  <li><a href="{% url 'app_mailings:mail_message_list' %}">Mail message</a></li>
-  {% if debug %}
-  	<li><a href="{% url 'admin:index' %}" target="_blank" rel="noopener noreferrer">Django admin</a></li>
-  {% endif %}
-</ul>
+        <li class="nav-item">
+          <a class="nav-link {% if url_name == 'app_mailings:mail_message_list' %}active{% endif %}"
+             href="{% url 'app_mailings:mail_message_list' %}">Письма</a>
+        </li>
+
+      {% endwith %}
+    </ul>
+  </div>
+</div>

@@ -1,28 +1,32 @@
 {% extends 'shared/_base.html' %}
 {% block title %}
-	{{ block.super }} - Рассылки
+  {{ block.super }} - Рассылки
 {% endblock %}
 {% block content %}
-  <div>
-    <a href="{% url 'app_mailings:mailing_create' %}">Create</a>
+  <div class="btn-toolbar" role="toolbar">
+    <div class="btn-group btn-group-sm my-4">
+      <a class="btn btn-outline-success" href="{% url 'app_mailings:mailing_create' %}">
+        <bi class="bi bi-send-plus"></bi>
+        Создать</a>
+    </div>
   </div>
-  <table>
+  <table class="table table-striped table-hover">
     <thead>
-      <tr>
-        <th>Рассылка</th>
-        <th>Владелец</th>
-        <th>Периодичность</th>
-      </tr>
+    <tr>
+      <th>Рассылка</th>
+      <th>Владелец</th>
+      <th>Периодичность</th>
+    </tr>
     </thead>
 
-	{% for object in object_list %}
-		<tbody>
-    <tr>
-      <td><a href="{{ object.get_absolute_url }}">{{ object }}</a></td>
-      <td>{{ object.mailing_owner }}</td>
-      <td>{{ object.get_periodicity_display }}</td>
-    </tr>
-    </tbody>
-	{% endfor %}
-	</table>
+    {% for object in object_list %}
+      <tbody>
+      <tr>
+        <td><a href="{{ object.get_absolute_url }}">{{ object }}</a></td>
+        <td>{{ object.mailing_owner }}</td>
+        <td>{{ object.get_periodicity_display }}</td>
+      </tr>
+      </tbody>
+    {% endfor %}
+  </table>
 {% endblock %}
