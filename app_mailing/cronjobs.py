@@ -2,6 +2,7 @@ from smtplib import SMTPDataError
 
 from django.core.mail import send_mail
 
+from app_logging.services import report_mailing, REPORT_WARNING, REPORT_FAIL, REPORT_SUCCESS
 from app_mailing.models import Mailing
 
 from datetime import datetime
@@ -42,6 +43,37 @@ def prepare_mailings():
 
 
 def send_mail_job(periodicity: Mailing.PeriodicityChoice):
+
+    def send_report(mailing, reports):
+        err_count = len([err for err,_ in reports if err])
+        total_count = len(reports)
+        if err_count == total_count:
+            parent_report = report_mailing(
+                mailing=mailing,
+                message=f'Ни одно сообщение не было отправлено',
+                report_status=REPORT_FAIL
+            )
+        elif err_count > 0:
+            parent_report = report_mailing(
+                mailing=mailing,
+                message=f'Отправка {err_count} из {total_count} сообщений завершились ошибкой',
+                report_status=REPORT_WARNING
+            )
+        else:
+            parent_report = report_mailing(
+                mailing=mailing,
+                message=f'Отправка {err_count} из {total_count} сообщений завершились ошибкой',
+                report_status=REPORT_SUCCESS
+            )
+
+        for err, recipient in reports:
+            report_mailing(
+                mailing=mailing,
+                exception=err,
+                recipient=recipient,
+                parent_report=parent_report
+            )
+
     def _wrap():
         prepare_mailings()
         mailing_list = Mailing.objects.filter(
@@ -52,15 +84,21 @@ def send_mail_job(periodicity: Mailing.PeriodicityChoice):
         if mailing_list.exists():
             for mailing in mailing_list:
                 msg = mailing.message
-                for subscriber in mailing.subscribers.all():
+                subscribers = mailing.subscribers.all()
+                reports = []
+                for subscriber in subscribers:
                     try:
                         send_mail(
                             subject=msg.subject,
                             message=msg.text,
                             from_email=mailing.mailing_owner.email,
                             recipient_list=(subscriber.email,))
+
+                        reports.append((None, subscriber))
+
                     except (SMTPDataError,) as send_mail_error:
-                        print(send_mail_error)  # TODO: Logging
+                        reports.append((send_mail_error, subscriber))
+                send_report(mailing, reports)
 
     return _wrap
 
