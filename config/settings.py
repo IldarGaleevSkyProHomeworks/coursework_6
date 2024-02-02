@@ -28,6 +28,10 @@ SECRET_KEY = "django-insecure-dpyj$wx@j)^&@4ftmwp$09#$o7pjgt9(y)ybu2lv8j5yvv)l#!
 DEBUG = True
 DISABLE_PASSWORD_VALIDATION = True
 
+INTERNAL_IPS = (
+    '127.0.0.1',
+)
+
 ALLOWED_HOSTS = []
 
 
