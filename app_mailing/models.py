@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse_lazy
 
 from app_accounts.models import User
 
@@ -95,6 +96,9 @@ class Mailing(models.Model):
             f'{Mailing.PeriodicityChoice(self.periodicity).label} | '
             f'{Mailing.MailingStatusChoice(self.mailing_status).label}'
         )
+
+    def get_absolute_url(self):
+        return reverse_lazy('app_mailings:mailing_detail', kwargs={'pk': self.pk})
 
     class Meta:
         verbose_name = 'Рассылка'

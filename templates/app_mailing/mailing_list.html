@@ -1,0 +1,28 @@
+{% extends 'shared/_base.html' %}
+{% block title %}
+	{{ block.super }} - Рассылки
+{% endblock %}
+{% block content %}
+  <div>
+    <a href="{% url 'app_mailings:mailing_create' %}">Create</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Рассылка</th>
+        <th>Владелец</th>
+        <th>Периодичность</th>
+      </tr>
+    </thead>
+
+	{% for object in object_list %}
+		<tbody>
+    <tr>
+      <td><a href="{{ object.get_absolute_url }}">{{ object }}</a></td>
+      <td>{{ object.mailing_owner }}</td>
+      <td>{{ object.get_periodicity_display }}</td>
+    </tr>
+    </tbody>
+	{% endfor %}
+	</table>
+{% endblock %}
