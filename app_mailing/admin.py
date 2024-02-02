@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models import Count
 
-from app_mailing.models import MailMessage, Mailing
+from app_mailing.models import MailMessage, Mailing, MailingResend
 
 
 class MailingInline(admin.TabularInline):
@@ -32,3 +32,9 @@ class MailMessageAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         queryset = queryset.annotate(mailings_count=Count('mailings'))
         return queryset
+
+
+@admin.register(MailingResend)
+class MailingResendAdmin(admin.ModelAdmin):
+    list_display = ['mailing', 'recipient', 'attempts_left']
+    readonly_fields = ['mailing', 'recipient']

@@ -140,7 +140,12 @@ AUTH_USER_MODEL = 'app_accounts.User'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CRONJOBS = [
+# Каждый день, неделю и месяц
     ('1 0 * * *', 'app_mailing.cronjobs.schedule_daily'),
     ('1 0 * * 0', 'app_mailing.cronjobs.schedule_weekly'),
     ('0 0 1 * *', 'app_mailing.cronjobs.schedule_monthly'),
+
+# Попытка повторной отправки в 6 и 12 часов каждый день
+    ('0 6 * * *',  'app_mailing.cronjobs.schedule_resend'),
+    ('0 12 * * *', 'app_mailing.cronjobs.schedule_resend'),
 ]

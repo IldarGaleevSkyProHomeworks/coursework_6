@@ -69,6 +69,12 @@ class Mailing(models.Model):
         verbose_name='Статус рассылки'
     )
 
+    attempts_count = models.PositiveIntegerField(
+        default=1,
+        verbose_name='Число повторных попыток',
+        help_text='Количество попыток повторной отправки в случае неудачи'
+    )
+
     message = models.ForeignKey(
         MailMessage,
         on_delete=models.CASCADE,
@@ -93,3 +99,30 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
+
+
+class MailingResend(models.Model):
+    mailing = models.ForeignKey(
+        Mailing,
+        on_delete=models.CASCADE,
+        verbose_name='Рассылка',
+    )
+
+    recipient = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Получатель'
+    )
+
+    attempts_left = models.IntegerField(
+        default=1,
+        verbose_name='Оставшееся число попыток'
+    )
+
+    def __str__(self):
+        return f'{self.mailing} ({self.recipient.email})'
+
+    class Meta:
+        verbose_name = 'Повторная отправка'
+        verbose_name_plural = 'Список писем для повторной отправки'
+        unique_together = ('mailing', 'recipient')

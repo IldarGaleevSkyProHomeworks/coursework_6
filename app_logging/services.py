@@ -17,10 +17,11 @@ def report_mailing(
 ) -> MailingReport:
 
     report_status = report_status or REPORT_SUCCESS if exception is None else REPORT_FAIL
+    msg_prefix = f'{mailing}: ' if mailing else ""
     if message:
-        message = f'{mailing}: {message}'
+        message = f'{msg_prefix}{message}'
     else:
-        message = f'{mailing}: {recipient.email if recipient else "-"}'
+        message = f'{msg_prefix}{recipient.email if recipient else "-"}'
 
     if exception:
         message += f'\n{exception}'
