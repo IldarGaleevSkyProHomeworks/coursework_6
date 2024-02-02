@@ -1,0 +1,26 @@
+{% extends 'shared/_base.html' %}
+{% block title %}
+	{{ block.super }} - Письма для рассылок
+{% endblock %}
+{% block content %}
+  <div>
+    <a href="{% url 'app_mailings:mail_message_create' %}">Create</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Тема</th>
+        <th>Владелец</th>
+      </tr>
+    </thead>
+
+	{% for object in object_list %}
+		<tbody>
+    <tr>
+      <td><a href="{{ object.get_absolute_url }}">{{ object }}</a></td>
+      <td>{{ object.author }}</td>
+    </tr>
+    </tbody>
+	{% endfor %}
+	</table>
+{% endblock %}

@@ -25,6 +25,9 @@ class MailMessage(models.Model):
     def __str__(self):
         return self.subject
 
+    def get_absolute_url(self):
+        return reverse_lazy('app_mailings:mail_message_detail', kwargs={'pk': self.pk})
+
     class Meta:
         verbose_name = 'Письмо'
         verbose_name_plural = 'Письма'

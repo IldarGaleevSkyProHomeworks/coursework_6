@@ -7,3 +7,9 @@ class MailingForm(forms.ModelForm):
     class Meta:
         model = Mailing
         fields = '__all__'
+
+
+class MailMessageForm(forms.ModelForm):
+    class Meta:
+        model = MailMessage
+        fields = '__all__'

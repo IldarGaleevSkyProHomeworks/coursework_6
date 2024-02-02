@@ -24,3 +24,6 @@ class MailingUpdateView(UpdateView):
 
 class MailingDeleteView(DeleteView):
     model = Mailing
+
+    def get_template_names(self):
+        return 'shared/model_confirm_delete.html'

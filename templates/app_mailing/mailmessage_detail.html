@@ -1,0 +1,22 @@
+{% extends 'shared/_base.html' %}
+
+{% block title %}
+	{{ block.super }} - {{ object }}
+{% endblock %}
+
+{% block content %}
+  <div>
+    <a href="{% url 'app_mailings:mail_message_list'%}">List</a>
+    <a href="{% url 'app_mailings:mail_message_update' object.pk %}">Edit</a>
+    <a href="{% url 'app_mailings:mail_message_delete' object.pk %}">Delete</a>
+  </div>
+
+  <p>{{ object.author }}</p>
+  <p>{{ object.subject }}</p>
+  <p>{{ object.text }}</p>
+  <ul>
+  {% for subscriber in object.subscribers.all %}
+  	<li>{{ subscriber.email }}</li>
+  {% endfor %}
+  </ul>
+{% endblock %}

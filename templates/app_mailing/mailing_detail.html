@@ -1,5 +1,9 @@
 {% extends 'shared/_base.html' %}
 
+{% block title %}
+	{{ block.super }} - {{ object }}
+{% endblock %}
+
 {% block content %}
   <div>
     <a href="{% url 'app_mailings:mailing_list'%}">List</a>
