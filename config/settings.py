@@ -33,6 +33,7 @@ INTERNAL_IPS = (
 )
 
 ALLOWED_HOSTS = []
+SITE_ID = 1
 
 
 # Application definition
@@ -44,9 +45,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
 
     "django_crontab",
     "django_bootstrap5",
+    "captcha",
 
     "app_accounts",
     "app_mailing",
@@ -156,8 +159,17 @@ BOOTSTRAP5 = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = 'app_accounts.User'
+LOGOUT_REDIRECT_URL = reverse_lazy('app_accounts:login')
+LOGIN_REDIRECT_URL = reverse_lazy('app_accounts:user_detail')
+
+
+CAPTCHA_BACKGROUND_COLOR = '#212529'
+CAPTCHA_FOREGROUND_COLOR = '#dee2e6'
+CAPTCHA_FONT_SIZE = 26
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'a@a.com'
 
 CRONJOBS = [
 # Каждый день, неделю и месяц

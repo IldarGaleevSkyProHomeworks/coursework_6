@@ -3,6 +3,13 @@
 {% block content %}
   <section class="mt-5">
   <h2>Сервис почтовых рассылок</h2>
+    {% if not user.is_authenticated %}
+    <p class="my-2">
+      Чтобы воспользоваться всеми преимуществами платформы
+      <a class="link-light" href="{% url 'app_accounts:login' %}">войдите</a> или
+    <a class="link-light" href="{% url 'app_accounts:registration' %}">зарегистрируйтесь</a>
+    </p>
+    {% endif %}
   <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur ea eligendi illo laboriosam nulla
     saepe sapiente similique suscipit. Dicta error expedita fuga harum illo maxime molestiae nihil quia quibusdam, vero!</p>
   </section>

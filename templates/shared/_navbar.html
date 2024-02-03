@@ -10,15 +10,59 @@
           <a class="nav-link {% if url_name == 'index' %}active{% endif %}"
              href="{% url 'index' %}">Главная</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link {% if url_name == 'app_mailings:mailing_list' %}active{% endif %}"
-             href="{% url 'app_mailings:mailing_list' %}">Рассылки</a>
-        </li>
 
-        <li class="nav-item">
-          <a class="nav-link {% if url_name == 'app_mailings:mail_message_list' %}active{% endif %}"
-             href="{% url 'app_mailings:mail_message_list' %}">Письма</a>
-        </li>
+        {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+               aria-expanded="false">Управление рассылками</a>
+            <ul class="dropdown-menu">
+              <li class="nav-item">
+                <a class="nav-link {% if url_name == 'app_mailings:mailing_list' %}active{% endif %}"
+                   href="{% url 'app_mailings:mailing_list' %}"><i class="bi bi-send mx-1"></i> Рассылки</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link {% if url_name == 'app_mailings:mail_message_list' %}active{% endif %}"
+                   href="{% url 'app_mailings:mail_message_list' %}"><i class="bi bi-envelope-plus mx-1"></i> Письма</a>
+              </li>
+            </ul>
+          </li>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+               aria-expanded="false">{{ user.short_str }}</a>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item {% if url_name == 'app_accounts:user_detail' %}disabled{% endif %}"
+                   href="{% url 'app_accounts:user_detail' %}"><i class="bi bi-person mx-1"></i> Профиль</a>
+              </li>
+              {% if user.is_staff %}
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'admin:index' %}" target="_blank"
+                     rel="noopener noreferrer"><i class="bi bi-gear mx-1"></i> Django admin</a>
+                </li>
+              {% endif %}
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li>
+                <a class="dropdown-item link-danger link-opacity-75" href="{% url 'app_accounts:logout' %}">
+                  <i class="bi bi-box-arrow-in-left mx-1"></i> Выход</a>
+              </li>
+            </ul>
+          </li>
+        {% else %}
+          {% if url_name != 'app_accounts:login' %}
+            <li>
+              <a class="nav-link" href="{% url 'app_accounts:login' %}"><i class="bi bi-box-arrow-in-right mx-1"></i> Войти</a>
+            </li>
+          {% endif %}
+        {% endif %}
 
       {% endwith %}
     </ul>

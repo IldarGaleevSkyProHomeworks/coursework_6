@@ -6,3 +6,6 @@ class AppAccountsConfig(AppConfig):
     name = "app_accounts"
 
     verbose_name = 'Аккаунты'
+
+    reset_password_mail_subject = 'reset password'
+    verify_mail_mail_subject = 'email verify'
