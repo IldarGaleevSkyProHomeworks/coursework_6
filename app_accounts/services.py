@@ -1,5 +1,6 @@
 import logging
 
+from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -15,7 +16,9 @@ from app_accounts.models import User
 logger = logging.getLogger(__name__)
 
 
-@background_task_manager.schedule(retry_count=3, ttl=30*60)
+@background_task_manager.schedule(
+    retry_count=settings.ACCOUNT_SERVICE_MAIL_RETRY_COUNT,
+    ttl=settings.ACCOUNT_SERVICE_MAIL_TASK_TTL)
 def send_email_to_verify(user_id: int, site_id: int):
     try:
         user = User.objects.get(pk=user_id)
@@ -48,7 +51,9 @@ def send_email_to_verify(user_id: int, site_id: int):
         logger.error(e)
 
 
-@background_task_manager.schedule(retry_count=3, ttl=30*60)
+@background_task_manager.schedule(
+    retry_count=settings.ACCOUNT_SERVICE_MAIL_RETRY_COUNT,
+    ttl=settings.ACCOUNT_SERVICE_MAIL_TASK_TTL)
 def send_new_user_password(user_id: int, new_password: str, site_id: int):
     try:
         user = User.objects.get(pk=user_id)

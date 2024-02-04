@@ -9,10 +9,16 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import json
+import locale
+import logging.config
 from pathlib import Path
 
 from django.urls import reverse_lazy
+from environs import Env
+
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,18 +27,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-dpyj$wx@j)^&@4ftmwp$09#$o7pjgt9(y)ybu2lv8j5yvv)l#!"
+SECRET_KEY = env.str('SECRET_KEY', None)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-DISABLE_PASSWORD_VALIDATION = True
+DEBUG = env.bool('DEBUG', False)
+DEBUG_MAIL = env.bool('DEBUG_MAIL', False)
+DISABLE_PASSWORD_VALIDATION = env.bool('DISABLE_PASSWORD_VALIDATION', False)
 
 INTERNAL_IPS = (
     '127.0.0.1',
 )
 
-ALLOWED_HOSTS = []
-SITE_ID = 1
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', [])
+SITE_ID = env.int('SITE_ID', 1)
 
 # Application definition
 
@@ -119,9 +126,10 @@ else:
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = env.str('LANGUAGE_CODE', 'en-us')
+locale.setlocale(locale.LC_ALL, env.str('PYTHON_LOCALE', 'en-us'))
 
-TIME_ZONE = "UTC"
+TIME_ZONE = env.str('TIME_ZONE', 'UTC')
 
 USE_I18N = True
 
@@ -160,14 +168,38 @@ CAPTCHA_BACKGROUND_COLOR = '#212529'
 CAPTCHA_FOREGROUND_COLOR = '#dee2e6'
 CAPTCHA_FONT_SIZE = 26
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'a@a.com'
+log_config_file = env.str('LOGGING_CONFIG_FILE', None)
+if log_config_file:
+    try:
+        with open(log_config_file, encoding='utf-8') as f:
+            log_config = json.load(f)
+            LOGGING_CONFIG = None
+            logging.config.dictConfig(log_config)
+    except Exception as e:
+        print(f'Log file open error: {e}')
+
+if DEBUG_MAIL:
+    EMAIL_BACKEND = env.str('EMAIL_BACKEND', 'django.core.mail.backends.filebased.EmailBackend')
+    EMAIL_FILE_PATH = BASE_DIR / 'tmp/email'
+else:
+    EMAIL_BACKEND = env.str('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+    EMAIL_FILE_PATH = env.str('EMAIL_FILE_PATH', None)
+    EMAIL_HOST = env.str('EMAIL_HOST')
+    EMAIL_PORT = env.int('EMAIL_PORT', 465)
+    EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
+    EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', False)
+    EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', True)
+    DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL')
+
+ACCOUNT_SERVICE_MAIL_RETRY_COUNT = env.int('ACCOUNT_SERVICE_MAIL_RETRY_COUNT', 3)
+ACCOUNT_SERVICE_MAIL_TASK_TTL = env.int('ACCOUNT_SERVICE_MAIL_TASK_TTL', 30 * 60)
 
 BACKGROUND_TASK_MANAGER = {
     "redis": {
-        "hostname": "localhost",
-        "port": 6379,
-        "db_id": 1
+        "hostname": env.str('BG_TASK__REDIS_HOSTNAME', 'localhost'),
+        "port": env.int('BG_TASK__REDIS_PORT', 6379),
+        "db_id": env.int('BG_TASK__REDIS_DB', 1)
     }
 }
 
