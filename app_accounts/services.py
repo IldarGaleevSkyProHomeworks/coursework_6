@@ -1,6 +1,5 @@
 import logging
 
-from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -10,12 +9,13 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator as token_generator
 
 from app_accounts.apps import AppAccountsConfig
+from app_accounts.cronjobs import background_task_manager
 from app_accounts.models import User
 
 logger = logging.getLogger(__name__)
 
 
-# TODO: need move to bg task
+@background_task_manager.schedule(retry_count=3, ttl=30*60)
 def send_email_to_verify(user_id: int, site_id: int):
     try:
         user = User.objects.get(pk=user_id)
@@ -48,7 +48,7 @@ def send_email_to_verify(user_id: int, site_id: int):
         logger.error(e)
 
 
-# TODO: need move to bg task
+@background_task_manager.schedule(retry_count=3, ttl=30*60)
 def send_new_user_password(user_id: int, new_password: str, site_id: int):
     try:
         user = User.objects.get(pk=user_id)

@@ -17,7 +17,6 @@ from django.urls import reverse_lazy
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -34,7 +33,6 @@ INTERNAL_IPS = (
 
 ALLOWED_HOSTS = []
 SITE_ID = 1
-
 
 # Application definition
 
@@ -88,7 +86,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -98,7 +95,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -120,7 +116,6 @@ else:
         },
     ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -131,7 +126,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -162,22 +156,31 @@ AUTH_USER_MODEL = 'app_accounts.User'
 LOGOUT_REDIRECT_URL = reverse_lazy('app_accounts:login')
 LOGIN_REDIRECT_URL = reverse_lazy('app_accounts:user_detail')
 
-
 CAPTCHA_BACKGROUND_COLOR = '#212529'
 CAPTCHA_FOREGROUND_COLOR = '#dee2e6'
 CAPTCHA_FONT_SIZE = 26
 
-
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'a@a.com'
 
+BACKGROUND_TASK_MANAGER = {
+    "redis": {
+        "hostname": "localhost",
+        "port": 6379,
+        "db_id": 1
+    }
+}
+
 CRONJOBS = [
-# Каждый день, неделю и месяц
+    # Каждый день, неделю и месяц
     ('1 0 * * *', 'app_mailing.cronjobs.schedule_daily'),
     ('1 0 * * 0', 'app_mailing.cronjobs.schedule_weekly'),
     ('0 0 1 * *', 'app_mailing.cronjobs.schedule_monthly'),
 
-# Попытка повторной отправки в 6 и 12 часов каждый день
-    ('0 6 * * *',  'app_mailing.cronjobs.schedule_resend'),
+    # Попытка повторной отправки в 6 и 12 часов каждый день
+    ('0 6 * * *', 'app_mailing.cronjobs.schedule_resend'),
     ('0 12 * * *', 'app_mailing.cronjobs.schedule_resend'),
+
+    # Фоновые задачи каждую минуту
+    ('* * * * *', 'app_accounts.cronjobs.run_scheduled'),
 ]
