@@ -18,15 +18,16 @@
       <th>Периодичность</th>
     </tr>
     </thead>
-
+    <tbody>
     {% for object in object_list %}
-      <tbody>
+
       <tr>
         <td><a href="{{ object.get_absolute_url }}">{{ object }}</a></td>
         <td>{{ object.mailing_owner }}</td>
         <td>{{ object.get_periodicity_display }}</td>
       </tr>
-      </tbody>
+
     {% endfor %}
+    </tbody>
   </table>
 {% endblock %}
