@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
 
+from config.views import e_handler404, e_handler403
+
 urlpatterns = [
     path('', TemplateView.as_view(template_name='landing/index.html'), name='index'),
     path("captcha/", include('captcha.urls')),
@@ -25,3 +27,7 @@ urlpatterns = [
     path("accounts/", include('app_accounts.urls', namespace='app_accounts')),
     path("mailings/", include('app_mailing.urls', namespace='app_mailings')),
 ]
+
+handler404 = e_handler404
+handler403 = e_handler403
+
