@@ -3,10 +3,10 @@
   {{ block.super }} - Письма для рассылок
 {% endblock %}
 {% block content %}
-  <div class="btn-toolbar" role="toolbar">
-    <div class="btn-group btn-group-sm my-4">
+  <div class="btn-toolbar my-4" role="toolbar">
+    <div class="btn-group btn-group-sm">
       <a class="btn btn-outline-success" href="{% url 'app_mailings:mail_message_create' %}">
-        <bi class="bi bi-envelope-plus"></bi>
+        <i class="bi bi-envelope-plus"></i>
         Создать</a>
     </div>
   </div>

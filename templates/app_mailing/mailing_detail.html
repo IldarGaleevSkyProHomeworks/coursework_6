@@ -5,16 +5,22 @@
 {% endblock %}
 
 {% block content %}
-  <div class="btn-toolbar" role="toolbar">
-    <div class="btn-group btn-group-sm my-4" role="group">
+  <div class="btn-toolbar my-4" role="toolbar">
+    <div class="btn-group btn-group-sm me-2" role="group">
       <a class="btn btn-outline-primary" href="{% url 'app_mailings:mailing_list' %}">
-        <bi class="bi bi-list"></bi>
+        <i class="bi bi-list"></i>
         Список</a>
+      <a class="btn btn-outline-success" href="{% url 'app_mailings:mailing_create' %}">
+        <i class="bi bi-send-plus"></i>
+        Создать новую</a>
+    </div>
+    <div class="btn-group btn-group-sm me-2" role="group">
+
       <a class="btn btn-outline-success" href="{% url 'app_mailings:mailing_update' object.pk %}">
-        <bi class="bi bi-pencil"></bi>
+        <i class="bi bi-pencil"></i>
         Править</a>
       <a class="btn btn-outline-danger" href="{% url 'app_mailings:mailing_delete' object.pk %}">
-        <bi class="bi bi-trash"></bi>
+        <i class="bi bi-trash"></i>
         Удалить</a>
     </div>
   </div>

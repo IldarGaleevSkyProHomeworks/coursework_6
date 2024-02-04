@@ -3,14 +3,14 @@
   {{ block.super }} - Рассылки
 {% endblock %}
 {% block content %}
-  <div class="btn-toolbar" role="toolbar">
-    <div class="btn-group btn-group-sm my-4">
+  <div class="btn-toolbar my-4" role="toolbar">
+    <div class="btn-group btn-group-sm">
       <a class="btn btn-outline-success" href="{% url 'app_mailings:mailing_create' %}">
-        <bi class="bi bi-send-plus"></bi>
+        <i class="bi bi-send-plus"></i>
         Создать</a>
     </div>
   </div>
-  <table class="table table-striped table-hover">
+  <table class="table table-striped table-hover mt-5">
     <thead>
     <tr>
       <th>Рассылка</th>

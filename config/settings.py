@@ -15,6 +15,7 @@ import logging.config
 from pathlib import Path
 
 from django.urls import reverse_lazy
+from django.views.generic import TemplateView
 from environs import Env
 
 env = Env()
@@ -127,9 +128,12 @@ else:
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = env.str('LANGUAGE_CODE', 'en-us')
-locale.setlocale(locale.LC_ALL, env.str('PYTHON_LOCALE', 'en-us'))
 
 TIME_ZONE = env.str('TIME_ZONE', 'UTC')
+# DATE_INPUT_FORMATS = [
+#     '%d/%m/%Y',
+#     '%d.%m.%Y'
+# ]
 
 USE_I18N = True
 
