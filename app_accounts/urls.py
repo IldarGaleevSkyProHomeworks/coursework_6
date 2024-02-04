@@ -4,12 +4,14 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import TemplateView
 
 from app_accounts.views import UserDetailView, UserResetPassword, UserEmailVerify, UserCreateView, UserEditView, \
-    VerifyMailAgain, UserPasswordChangeView
+    VerifyMailAgain, UserPasswordChangeView, UserListView, UserBlockUnblockView
 
 app_name = AppAccountsConfig.name
 
 urlpatterns = [
     path('', UserDetailView.as_view(), name='user_detail'),
+    path('list/', UserListView.as_view(), name='users_list'),
+    path('<int:pk>/block/', UserBlockUnblockView.as_view(), name='user_block'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('registration/', UserCreateView.as_view(), name='registration'),
     path('registration/email_verify/<uidb64>/<token>/', UserEmailVerify.as_view(), name='email_verify'),

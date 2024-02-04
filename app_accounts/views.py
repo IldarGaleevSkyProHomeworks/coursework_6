@@ -1,17 +1,17 @@
 from django.contrib.auth import login
 from django.contrib.auth.forms import SetPasswordForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, UpdateView, CreateView, FormView
+from django.views.generic import DetailView, UpdateView, CreateView, FormView, ListView
 from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.utils.http import urlsafe_base64_decode
 
-from app_accounts.forms import UserResetPasswordForm, UserRegisterForm, UserEditForm
+from app_accounts.forms import UserResetPasswordForm, UserRegisterForm, UserEditForm, UserBlockUnblockForm
 from app_accounts.models import User
 from app_accounts.services import send_email_to_verify, send_new_user_password
 
@@ -27,6 +27,17 @@ class UserDetailView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
+
+class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = User
+
+    def test_func(self):
+        curr_user = self.request.user
+        return any([
+            curr_user.has_perm('app_accounts.view_user'),
+            curr_user.has_perm('app_accounts.can_block_users')
+        ])
 
 
 class UserCreateView(CreateView):
@@ -129,3 +140,12 @@ class UserResetPassword(FormView):
             send_new_user_password(user.id, new_password, get_current_site(self.request).id)
 
             return redirect(reverse_lazy('app_accounts:reset_password_alert'))
+
+
+class UserBlockUnblockView(UpdateView):
+    model = User
+    template_name = 'app_accounts/user_edit.html'
+    form_class = UserBlockUnblockForm
+
+    def get_success_url(self):
+        return reverse_lazy('app_accounts:users_list')

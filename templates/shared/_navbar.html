@@ -16,6 +16,19 @@
              href="{% url 'app_blog:articles' %}">Блог</a>
         </li>
 
+        {% if perms.app_accounts.view_user or perms.app_accounts.can_block_users %}
+        	<li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+               aria-expanded="false">Администрирование</a>
+            <ul class="dropdown-menu">
+              <li class="nav-item">
+                <a class="nav-link {% if url_name == 'app_accounts:users_list' %}active{% endif %}"
+                   href="{% url 'app_accounts:users_list' %}"><i class="bi bi-person-lines-fill mx-1"></i> Пользователи</a>
+              </li>
+            </ul>
+          </li>
+        {% endif %}
+
         {% if user.is_authenticated %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"

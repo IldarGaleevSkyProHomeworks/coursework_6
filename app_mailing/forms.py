@@ -38,6 +38,25 @@ class MailingForm(forms.ModelForm):
             self.fields['message'].queryset = MailMessage.objects.none()
 
 
+class MailingStopForm(forms.ModelForm):
+
+    class Meta:
+        model = Mailing
+        fields = ['date_start', 'date_finish', 'periodicity', 'message']
+
+    def clean(self):
+        self.errors.clear()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['date_start'].widget.attrs['readonly'] = True
+        self.fields['date_finish'].widget.attrs['readonly'] = True
+        self.fields['periodicity'].widget.attrs['disabled'] = True
+        self.fields['message'].widget.attrs['disabled'] = True
+        self.fields['periodicity'].widget.is_required = False
+        self.fields['message'].widget.is_required = False
+
+
 class MailMessageForm(forms.ModelForm):
     class Meta:
         model = MailMessage

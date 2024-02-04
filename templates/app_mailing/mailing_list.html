@@ -16,6 +16,8 @@
       <th>Рассылка</th>
       <th>Владелец</th>
       <th>Периодичность</th>
+      <th>Статус</th>
+      <th></th>
     </tr>
     </thead>
     <tbody>
@@ -25,6 +27,26 @@
         <td><a href="{{ object.get_absolute_url }}">{{ object }}</a></td>
         <td>{{ object.mailing_owner }}</td>
         <td>{{ object.get_periodicity_display }}</td>
+        <td>
+          {% if object.mailing_status == 3 %}
+          	<i class="bi bi-exclamation-triangle text-warning-emphasis"></i>
+          {% endif %}
+          {{ object.get_mailing_status_display }}
+        </td>
+        <td>
+
+        <div class="btn-group btn-group-sm" role="group">
+              {% if user.pk == object.mailing_owner.pk %}
+                <a href="{% url 'app_mailings:mailing_update' object.pk %}" class="btn btn-outline-primary"><i
+                    class="bi bi-pencil"></i></a>
+              {% endif %}
+              {% if perms.app_mailing.can_stop_mailing and object.mailing_status == 1 and not user.pk == object.pk %}
+                <a href="{% url 'app_mailings:mailing_stop' object.pk %}" class="btn btn-outline-warning">
+                    <i class="bi bi-stop"></i>
+                </a>
+              {% endif %}
+            </div>
+        </td>
       </tr>
 
     {% endfor %}

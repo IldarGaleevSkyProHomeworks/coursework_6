@@ -23,14 +23,17 @@ class MailMessageDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
 
     def test_func(self):
         curr_user = self.request.user
-        return self.get_object().author == curr_user
+        return (self.get_object().author == curr_user or
+                self.request.user.has_perm('app_mailing.view_mailmessage'))
 
 
 class MailMessageListView(LoginRequiredMixin, ListView):
     model = MailMessage
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(author=self.request.user)
+        queryset = super().get_queryset()
+        if not self.request.user.has_perm('app_mailing.view_mailmessage'):
+            queryset.filter(author=self.request.user)
         return queryset
 
 
@@ -40,7 +43,8 @@ class MailMessageUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
 
     def test_func(self):
         curr_user = self.request.user
-        return self.get_object().author == curr_user
+        return (self.get_object().author == curr_user or
+                self.request.user.has_perm('app_mailing.change_mailmessage'))
 
 
 class MailMessageDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

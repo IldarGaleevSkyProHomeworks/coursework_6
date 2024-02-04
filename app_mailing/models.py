@@ -43,6 +43,7 @@ class Mailing(models.Model):
         CREATED = 0, 'Создана'
         STARTED = 1, 'Запущена'
         FINISHED = 2, 'Завершена'
+        STOPPED = 3, 'Остановлена'
 
     mailing_owner = models.ForeignKey(
         User,
@@ -106,6 +107,10 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
+
+        permissions = [
+            ('can_stop_mailing', 'Может остановить рассылку')
+        ]
 
 
 class MailingResend(models.Model):
