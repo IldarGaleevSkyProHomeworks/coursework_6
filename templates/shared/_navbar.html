@@ -11,6 +11,11 @@
              href="{% url 'index' %}">Главная</a>
         </li>
 
+        <li class="nav-item">
+          <a class="nav-link {% if url_name == 'app_blog:articles' %}active{% endif %}"
+             href="{% url 'app_blog:articles' %}">Блог</a>
+        </li>
+
         {% if user.is_authenticated %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"

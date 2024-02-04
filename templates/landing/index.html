@@ -14,4 +14,29 @@
     saepe sapiente similique suscipit. Dicta error expedita fuga harum illo maxime molestiae nihil quia quibusdam, vero!</p>
   </section>
 
+  {% if popular_articles %}
+    <h5 class="mt-5 pt-2 {% if popular_products %}border-top{% endif %}">Популярные статьи</h5>
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+        {% for article in popular_articles %}
+            <div class="col">
+                <div class="card mb-3 h-100" style="max-width: 540px;">
+                    <div class="card-body">
+                        <h6 class="card-title">{{ article.title }}</h6>
+                        <p class="card-text">{{ article.content_text|truncatechars:100 }}</p>
+
+                        <p class="card-text text-end">
+                            <small class="text-body-secondary ">{{ article.create_date }}</small>
+                        </p>
+                        <a href="{% url 'app_blog:article_detail' article.slug %}" class="stretched-link"></a>
+                    </div>
+
+                    <div class="card-footer">
+                        <small class="text-body-secondary">{{ article.view_count }} просмотров</small>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
 {% endblock %}

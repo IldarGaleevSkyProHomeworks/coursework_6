@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "app_accounts",
     "app_mailing",
     "app_logging",
+    "app_blog",
 ]
 
 MIDDLEWARE = [
@@ -148,6 +149,9 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 BOOTSTRAP5 = {
     "css_url": {
         "url": f'/{STATIC_URL}css/bootstrap.min.css'
@@ -171,6 +175,8 @@ LOGIN_REDIRECT_URL = reverse_lazy('app_accounts:user_detail')
 CAPTCHA_BACKGROUND_COLOR = '#212529'
 CAPTCHA_FOREGROUND_COLOR = '#dee2e6'
 CAPTCHA_FONT_SIZE = 26
+
+POPULAR_ARTICLES_COUNT = env.int('POPULAR_ARTICLES_COUNT', 5)
 
 log_config_file = env.str('LOGGING_CONFIG_FILE', None)
 if log_config_file:

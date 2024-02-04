@@ -14,19 +14,31 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
+from django.conf.urls.static import static
 
+from app_blog.models import Article
 from config.views import e_handler404, e_handler403
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='landing/index.html'), name='index'),
+    path('', TemplateView.as_view(
+        template_name='landing/index.html',
+        extra_context={
+            'popular_articles': Article.objects.order_by('-view_count')[:settings.POPULAR_ARTICLES_COUNT]
+        }), name='index'),
     path("captcha/", include('captcha.urls')),
     path("admin/", admin.site.urls),
     path("accounts/", include('app_accounts.urls', namespace='app_accounts')),
     path("mailings/", include('app_mailing.urls', namespace='app_mailings')),
+    path('articles/', include('app_blog.urls', namespace='app_blog')),
+
+
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = e_handler404
 handler403 = e_handler403
