@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse_lazy
 
 from app_accounts.models import User
 
@@ -24,6 +25,9 @@ class MailMessage(models.Model):
     def __str__(self):
         return self.subject
 
+    def get_absolute_url(self):
+        return reverse_lazy('app_mailings:mail_message_detail', kwargs={'pk': self.pk})
+
     class Meta:
         verbose_name = 'Письмо'
         verbose_name_plural = 'Письма'
@@ -39,6 +43,7 @@ class Mailing(models.Model):
         CREATED = 0, 'Создана'
         STARTED = 1, 'Запущена'
         FINISHED = 2, 'Завершена'
+        STOPPED = 3, 'Остановлена'
 
     mailing_owner = models.ForeignKey(
         User,
@@ -69,6 +74,12 @@ class Mailing(models.Model):
         verbose_name='Статус рассылки'
     )
 
+    attempts_count = models.PositiveIntegerField(
+        default=1,
+        verbose_name='Число повторных попыток',
+        help_text='Количество попыток повторной отправки в случае неудачи'
+    )
+
     message = models.ForeignKey(
         MailMessage,
         on_delete=models.CASCADE,
@@ -90,6 +101,40 @@ class Mailing(models.Model):
             f'{Mailing.MailingStatusChoice(self.mailing_status).label}'
         )
 
+    def get_absolute_url(self):
+        return reverse_lazy('app_mailings:mailing_detail', kwargs={'pk': self.pk})
+
     class Meta:
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
+
+        permissions = [
+            ('can_stop_mailing', 'Может остановить рассылку')
+        ]
+
+
+class MailingResend(models.Model):
+    mailing = models.ForeignKey(
+        Mailing,
+        on_delete=models.CASCADE,
+        verbose_name='Рассылка',
+    )
+
+    recipient = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Получатель'
+    )
+
+    attempts_left = models.IntegerField(
+        default=1,
+        verbose_name='Оставшееся число попыток'
+    )
+
+    def __str__(self):
+        return f'{self.mailing} ({self.recipient.email})'
+
+    class Meta:
+        verbose_name = 'Повторная отправка'
+        verbose_name_plural = 'Список писем для повторной отправки'
+        unique_together = ('mailing', 'recipient')

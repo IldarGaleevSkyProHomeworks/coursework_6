@@ -40,6 +40,8 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     username = None
+    first_name = None
+    last_name = None
 
     email = models.EmailField(
         unique=True
@@ -54,7 +56,9 @@ class User(AbstractUser):
 
     comment = models.CharField(
         max_length=250,
-        verbose_name='Комментарий'
+        verbose_name='Комментарий',
+        null=True,
+        blank=True,
     )
 
     is_email_verify = models.BooleanField(
@@ -73,3 +77,8 @@ class User(AbstractUser):
 
     def __str__(self):
         return f'{self.full_name} ({self.email})' if self.full_name else self.email
+
+    class Meta:
+        permissions = [
+            ('can_block_users', 'Может блокировать пользователей')
+        ]
