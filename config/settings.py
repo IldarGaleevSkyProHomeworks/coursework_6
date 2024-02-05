@@ -34,6 +34,7 @@ SECRET_KEY = env.str('SECRET_KEY', None)
 DEBUG = env.bool('DEBUG', False)
 DEBUG_MAIL = env.bool('DEBUG_MAIL', False)
 DISABLE_PASSWORD_VALIDATION = env.bool('DISABLE_PASSWORD_VALIDATION', False)
+CACHE_ENABLED = env.bool('CACHE_ENABLED', False)
 
 INTERNAL_IPS = (
     '127.0.0.1',
@@ -204,6 +205,20 @@ else:
 
 ACCOUNT_SERVICE_MAIL_RETRY_COUNT = env.int('ACCOUNT_SERVICE_MAIL_RETRY_COUNT', 3)
 ACCOUNT_SERVICE_MAIL_TASK_TTL = env.int('ACCOUNT_SERVICE_MAIL_TASK_TTL', 30 * 60)
+
+if CACHE_ENABLED:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': env.str('REDIS_CONNECTION_STRING', 'redis://127.0.0.1:6379'),
+            "OPTIONS": {
+                "db": env.int('REDIS_CACHE_DATABASE', 1),
+            }
+        }
+    }
+    INDEX_PAGE_CACHE_TIME = env.int('INDEX_PAGE_CACHE_TIME', 60 * 60)
+else:
+    INDEX_PAGE_CACHE_TIME = 0
 
 BACKGROUND_TASK_MANAGER = {
     "redis": {

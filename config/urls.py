@@ -17,6 +17,7 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
+from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 from django.conf.urls.static import static
 
@@ -24,18 +25,16 @@ from app_blog.models import Article
 from config.views import e_handler404, e_handler403
 
 urlpatterns = [
-    path('', TemplateView.as_view(
+    path('', cache_page(settings.INDEX_PAGE_CACHE_TIME)(TemplateView.as_view(
         template_name='landing/index.html',
         extra_context={
             'popular_articles': Article.objects.order_by('-view_count')[:settings.POPULAR_ARTICLES_COUNT]
-        }), name='index'),
+        })), name='index'),
     path("captcha/", include('captcha.urls')),
     path("admin/", admin.site.urls),
     path("accounts/", include('app_accounts.urls', namespace='app_accounts')),
     path("mailings/", include('app_mailing.urls', namespace='app_mailings')),
     path('articles/', include('app_blog.urls', namespace='app_blog')),
-
-
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
