@@ -38,7 +38,8 @@
 
     <div class="text-end">
       <small class="text-muted">Статью просмотрели {{ object.view_count }} раз</small>
-      <p class="text-muted mt-2">Автор {% if object.author %}
+      <p class="text-muted mt-2">Автор
+        {% if object.author.full_name %}
         <strong>{{ object.author.full_name }}</strong>
       {% else %}
         к сожалению не представился

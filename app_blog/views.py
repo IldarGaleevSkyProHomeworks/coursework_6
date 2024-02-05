@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.cache import cache
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
@@ -13,10 +15,18 @@ class ArticleListView(ListView):
     paginate_by = AppBlogConfig.articles_per_page
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.filter(is_published=True).order_by('-create_date')
+        if not settings.CACHE_ENABLED:
 
-        return qs
+            qs = super().get_queryset()
+            qs = qs.filter(is_published=True).order_by('-create_date')
+
+            return qs
+
+        return cache.get_or_set(
+            key=f'article_list_{self.request.GET.get("page",1)}',
+            default=super().get_queryset().filter(is_published=True).order_by('-create_date'),
+            timeout=settings.ARTICLES_PAGE_CACHE_TIME
+        )
 
 
 class ArticleDetailView(DetailView):
@@ -29,15 +39,35 @@ class ArticleDetailView(DetailView):
         return ctx
 
     def get_object(self, queryset=None):
-        self.object = super().get_object(queryset)
-        self.object.view_count += 1
-        self.object.save()
-        # if self.object.view_count in BlogAppConfig.article_view_counts_congrats:
-        #     tasks.send_mail.task_article_congrats(
-        #         article_id=self.object.id,
-        #         site_id=get_current_site(self.request).id,
-        #         view_count=self.object.view_count
-        #     )
+        if not settings.CACHE_ENABLED:
+            self.object = super().get_object(queryset)
+            self.object.view_count += 1
+            self.object.save()
+        else:
+            key = f'article_{self.request.path}'
+            key_views = f'{key}_views'
+            self.object = cache.get_or_set(
+                key=key,
+                default=super().get_object(queryset),
+                timeout=settings.ARTICLES_PAGE_CACHE_TIME
+            )
+
+            cached_views = cache.get_or_set(
+                key=key_views,
+                default=1,
+                timeout=50
+            )
+            cached_views += 1
+            cache.set(key_views, cached_views)
+
+            if cached_views >= settings.ARTICLE_CACHED_VIEW_COUNT:
+                db_obj = super().get_object(queryset)
+                db_obj.view_count += cached_views
+                db_obj.save()
+                cache.delete(key_views)
+                cache.delete(key)
+                self.object = db_obj
+
         return self.object
 
 
