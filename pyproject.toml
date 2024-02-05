@@ -14,6 +14,7 @@ django-simple-captcha = "^0.6.0"
 redis = "^5.0.1"
 environs = {extras = ["django"], version = "^10.0.0"}
 pytils = "^0.4.1"
+psycopg2 = "^2.9.9"
 
 
 [tool.poetry.group.dev.dependencies]

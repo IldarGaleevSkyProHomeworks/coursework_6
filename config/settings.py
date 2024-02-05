@@ -100,9 +100,17 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
+    "sqlite": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+    },
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env.str('PG_NAME', 'mailing'),
+        'USER': env.str('PG_USER', 'postgres'),
+        'PASSWORD': env.str('PG_PASSWORD'),
+        'HOST': env.str('PG_HOST', 'localhost'),
+        'PORT': env.int('PG_PORT', 5432),
     }
 }
 
