@@ -15,21 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from django.views.decorators.cache import cache_page
-from django.views.generic import TemplateView
-from django.conf.urls.static import static
 
-from app_blog.models import Article
-from config.views import e_handler404, e_handler403
+from landing.views import e_handler404, e_handler403, index_page_view
 
 urlpatterns = [
-    path('', cache_page(settings.INDEX_PAGE_CACHE_TIME)(TemplateView.as_view(
-        template_name='landing/index.html',
-        extra_context={
-            'popular_articles': Article.objects.order_by('-view_count')[:settings.POPULAR_ARTICLES_COUNT]
-        })), name='index'),
+    path('', cache_page(settings.INDEX_PAGE_CACHE_TIME)(index_page_view), name='index'),
     path("captcha/", include('captcha.urls')),
     path("admin/", admin.site.urls),
     path("accounts/", include('app_accounts.urls', namespace='app_accounts')),
@@ -41,4 +35,3 @@ urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = e_handler404
 handler403 = e_handler403
-
